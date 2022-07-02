@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:note_3/services/notification_service.dart';
 import 'package:note_3/services/theme_service.dart';
+import 'package:note_3/ui/add_task.dart';
 import 'package:note_3/ui/theme.dart';
 import 'package:note_3/widget/button.dart';
 
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage> {
 
   _addTaskBar() {
     return Container(
-      margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -88,7 +89,9 @@ class _HomePageState extends State<HomePage> {
           ),
           MyButton(
             label: "+ Add Task",
-            onTap: () {},
+            onTap: () {
+              Get.to(AddTaskPage());
+            },
           ),
         ],
       ),
