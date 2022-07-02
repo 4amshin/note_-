@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:note_3/ui/theme.dart';
 import 'package:note_3/widget/input_field.dart';
+import 'dart:developer' as devtools show log;
 
 class AddTaskPage extends StatefulWidget {
   const AddTaskPage({Key? key}) : super(key: key);
@@ -13,6 +14,9 @@ class AddTaskPage extends StatefulWidget {
 
 class _AddTaskPageState extends State<AddTaskPage> {
   DateTime _selectedDate = DateTime.now();
+  String _endTime = "9.30 PM";
+  String _startTime = DateFormat('hh:mm a').format(DateTime.now()).toString();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +43,39 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     _getDateFromUser();
                   },
                 ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: InputField(
+                      title: 'Start Date',
+                      hint: _startTime,
+                      widget: IconButton(
+                        icon: const Icon(Icons.access_time_rounded),
+                        iconSize: 20,
+                        color: Colors.grey,
+                        onPressed: () {
+                          _getTimeFromUser(isStartTime: true);
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: InputField(
+                      title: 'End Date',
+                      hint: _endTime,
+                      widget: IconButton(
+                        icon: const Icon(Icons.access_time_rounded),
+                        iconSize: 20,
+                        color: Colors.grey,
+                        onPressed: () {
+                          _getTimeFromUser(isStartTime: false);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -74,19 +111,46 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   _getDateFromUser() async {
-    DateTime? _pickerDate = await showDatePicker(
+    DateTime? pickerDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2015),
       lastDate: DateTime(2122),
     );
 
-    if (_pickerDate != null) {
+    if (pickerDate != null) {
       setState(() {
-        _selectedDate = _pickerDate;
+        _selectedDate = pickerDate;
       });
     } else {
-      print("Error on Date Picker");
+      devtools.log('Error on date picker');
     }
+  }
+
+  _getTimeFromUser({required bool isStartTime}) async {
+    var pickedTime = await _showTimePicker();
+    String formatTime = pickedTime.format(context);
+    if (pickedTime == null) {
+      devtools.log('Time cancel');
+    } else if (isStartTime == true) {
+      setState(() {
+        _startTime = formatTime;
+      });
+    } else if (isStartTime == false) {
+      setState(() {
+        _endTime = formatTime;
+      });
+    }
+  }
+
+  _showTimePicker() {
+    return showTimePicker(
+      initialEntryMode: TimePickerEntryMode.input,
+      context: context,
+      initialTime: TimeOfDay(
+        hour: int.parse(_startTime.split(":")[0]),
+        minute: int.parse(_startTime.split(":")[1].split(" ")[0]),
+      ),
+    );
   }
 }
