@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:note_3/ui/theme.dart';
+import 'package:note_3/widget/button.dart';
 import 'package:note_3/widget/input_field.dart';
 import 'dart:developer' as devtools show log;
 
@@ -16,7 +17,23 @@ class _AddTaskPageState extends State<AddTaskPage> {
   DateTime _selectedDate = DateTime.now();
   String _endTime = "9.30 PM";
   String _startTime = DateFormat('hh:mm a').format(DateTime.now()).toString();
+  int _selectedRemind = 5;
+  List<int> remindList = [
+    5,
+    10,
+    15,
+    20,
+  ];
 
+  String _selectedRepeat = 'None';
+  List<String> repeatList = [
+    'None',
+    'Daily',
+    'Weekly',
+    'Monthly',
+  ];
+
+  int _selectedColor = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +55,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 widget: IconButton(
                   icon: const Icon(Icons.calendar_today_outlined),
                   iconSize: 20,
-                  color: Colors.grey,
+                  color: Get.isDarkMode ? Colors.white : Colors.grey,
                   onPressed: () {
                     _getDateFromUser();
                   },
@@ -46,33 +63,85 @@ class _AddTaskPageState extends State<AddTaskPage> {
               ),
               Row(
                 children: [
-                  Expanded(
-                    child: InputField(
-                      title: 'Start Date',
-                      hint: _startTime,
-                      widget: IconButton(
-                        icon: const Icon(Icons.access_time_rounded),
-                        iconSize: 20,
-                        color: Colors.grey,
-                        onPressed: () {
-                          _getTimeFromUser(isStartTime: true);
-                        },
-                      ),
-                    ),
+                  _timerPicker(
+                    title: 'Start Time',
+                    hint: _startTime,
+                    icon: Icons.access_time_rounded,
+                    isStart: true,
                   ),
                   const SizedBox(width: 10),
-                  Expanded(
-                    child: InputField(
-                      title: 'End Date',
-                      hint: _endTime,
-                      widget: IconButton(
-                        icon: const Icon(Icons.access_time_rounded),
-                        iconSize: 20,
-                        color: Colors.grey,
-                        onPressed: () {
-                          _getTimeFromUser(isStartTime: false);
-                        },
-                      ),
+                  _timerPicker(
+                    title: 'End Time',
+                    hint: _endTime,
+                    icon: Icons.access_time_rounded,
+                    isStart: false,
+                  ),
+                ],
+              ),
+              InputField(
+                title: 'Remind',
+                hint: "$_selectedRemind minutes early",
+                widget: DropdownButton(
+                  icon: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Get.isDarkMode ? Colors.white : Colors.grey,
+                  ),
+                  iconSize: 32,
+                  elevation: 4,
+                  style: subTitleStyle,
+                  underline: const SizedBox(height: 0),
+                  items: remindList.map<DropdownMenuItem<String>>(
+                    (int value) {
+                      return DropdownMenuItem<String>(
+                        value: value.toString(),
+                        child: Text(value.toString()),
+                      );
+                    },
+                  ).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedRemind = int.parse(newValue!);
+                    });
+                  },
+                ),
+              ),
+              InputField(
+                title: 'Repeat',
+                hint: _selectedRepeat,
+                widget: DropdownButton(
+                  icon: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Get.isDarkMode ? Colors.white : Colors.grey,
+                  ),
+                  iconSize: 32,
+                  elevation: 4,
+                  style: subTitleStyle,
+                  underline: const SizedBox(height: 0),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedRepeat = newValue!;
+                    });
+                  },
+                  items: repeatList.map<DropdownMenuItem<String>>(
+                    (String? value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value!),
+                      );
+                    },
+                  ).toList(),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _colorPalette(),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: MyButton(
+                      label: 'Create Task',
+                      onTap: () {},
                     ),
                   ),
                 ],
@@ -81,6 +150,52 @@ class _AddTaskPageState extends State<AddTaskPage> {
           ),
         ),
       ),
+    );
+  }
+
+  _colorPalette() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Color',
+          style: titleStyle,
+        ),
+        const SizedBox(height: 5),
+        Wrap(
+          children: List<Widget>.generate(
+            3,
+            (int index) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedColor = index;
+                    devtools.log('index $index');
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: CircleAvatar(
+                    radius: 12,
+                    backgroundColor: index == 0
+                        ? primaryClr
+                        : index == 1
+                            ? pinkClr
+                            : yellowClr,
+                    child: _selectedColor == index
+                        ? const Icon(
+                            Icons.done,
+                            color: Colors.white,
+                            size: 16,
+                          )
+                        : const SizedBox(),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -150,6 +265,28 @@ class _AddTaskPageState extends State<AddTaskPage> {
       initialTime: TimeOfDay(
         hour: int.parse(_startTime.split(":")[0]),
         minute: int.parse(_startTime.split(":")[1].split(" ")[0]),
+      ),
+    );
+  }
+
+  _timerPicker({
+    required String title,
+    required String hint,
+    required IconData icon,
+    required bool isStart,
+  }) {
+    return Expanded(
+      child: InputField(
+        title: title,
+        hint: hint,
+        widget: IconButton(
+          icon: Icon(icon),
+          iconSize: 20,
+          color: Get.isDarkMode ? Colors.white : Colors.grey,
+          onPressed: () {
+            _getTimeFromUser(isStartTime: isStart);
+          },
+        ),
       ),
     );
   }

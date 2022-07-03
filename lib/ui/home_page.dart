@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
       appBar: _appBar(),
       body: Column(
         children: [
+          const SizedBox(height: 10),
           _addTaskBar(),
           _addDateBar(),
         ],
