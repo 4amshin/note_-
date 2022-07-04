@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:note_3/controller/task_controller.dart';
+import 'package:note_3/models/task.dart';
 import 'package:note_3/ui/theme.dart';
 import 'package:note_3/widget/button.dart';
 import 'package:note_3/widget/input_field.dart';
@@ -14,8 +16,13 @@ class AddTaskPage extends StatefulWidget {
 }
 
 class _AddTaskPageState extends State<AddTaskPage> {
+  final TaskController _taskController = Get.put(TaskController());
+
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
+
   DateTime _selectedDate = DateTime.now();
-  String _endTime = "9.30 PM";
+  String _endTime = DateFormat('hh:mm a').format(DateTime.now()).toString();
   String _startTime = DateFormat('hh:mm a').format(DateTime.now()).toString();
   int _selectedRemind = 5;
   List<int> remindList = [
@@ -47,8 +54,15 @@ class _AddTaskPageState extends State<AddTaskPage> {
             children: [
               Text('Add Task', style: headingStyle),
               const SizedBox(height: 15),
-              const InputField(title: 'Title', hint: 'Enter your title'),
-              const InputField(title: 'Note', hint: 'Enter your note'),
+              InputField(
+                title: 'Title',
+                hint: 'Enter your title',
+                controller: _titleController,
+              ),
+              InputField(
+                  title: 'Note',
+                  hint: 'Enter your note',
+                  controller: _noteController),
               InputField(
                 title: 'Date',
                 hint: DateFormat.yMMMd().format(_selectedDate),
@@ -141,7 +155,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: MyButton(
                       label: 'Create Task',
-                      onTap: () {},
+                      onTap: () {
+                        devtools.log('Calling Warning Dialog');
+                        _validateData();
+                      },
                     ),
                   ),
                 ],
@@ -151,6 +168,44 @@ class _AddTaskPageState extends State<AddTaskPage> {
         ),
       ),
     );
+  }
+
+  _validateData() {
+    if (_titleController.text.isNotEmpty && _noteController.text.isNotEmpty) {
+      devtools.log('Sending data to database...');
+      _addTaskToDb();
+      Get.back();
+    } else if (_titleController.text.isEmpty || _noteController.text.isEmpty) {
+      devtools.log('Data is Empty');
+      Get.snackbar(
+        'Required',
+        'All fields are required !',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.white,
+        colorText: pinkClr,
+        icon: const Icon(
+          Icons.warning_amber_outlined,
+          color: pinkClr,
+        ),
+      );
+    }
+  }
+
+  _addTaskToDb() async {
+    int value = await _taskController.addTask(
+      task: Task(
+        note: _noteController.text,
+        title: _titleController.text,
+        date: DateFormat.yMd().format(_selectedDate),
+        startTime: _startTime,
+        endTime: _endTime,
+        remind: _selectedRemind,
+        repeat: _selectedRepeat,
+        color: _selectedColor,
+        isCompleted: 0,
+      ),
+    );
+    devtools.log('My id is $value');
   }
 
   _colorPalette() {

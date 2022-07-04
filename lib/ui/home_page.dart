@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(),
+      backgroundColor: context.theme.backgroundColor,
       body: Column(
         children: [
           const SizedBox(height: 10),
@@ -62,6 +63,7 @@ class _HomePageState extends State<HomePage> {
         selectedTextColor: Colors.white,
         dateTextStyle: timeTextStyle(fontSize: 16),
         monthTextStyle: timeTextStyle(fontSize: 14),
+        dayTextStyle: timeTextStyle(fontSize: 11),
         onDateChange: (date) {
           selectedDate = date;
         },

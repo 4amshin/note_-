@@ -37,6 +37,7 @@ class InputField extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
+                  controller: controller,
                   cursorColor:
                       Get.isDarkMode ? Colors.grey[100] : Colors.grey[700],
                   readOnly: widget == null ? false : true,
