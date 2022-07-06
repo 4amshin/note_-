@@ -8,6 +8,7 @@ import 'package:note_3/models/task.dart';
 import 'package:note_3/services/notification_service.dart';
 import 'package:note_3/services/theme_service.dart';
 import 'package:note_3/ui/add_task.dart';
+import 'package:note_3/ui/notified_page.dart';
 import 'package:note_3/ui/theme.dart';
 import 'package:note_3/widget/button.dart';
 import 'dart:developer' as devtools show log;
@@ -46,6 +47,43 @@ class _HomePageState extends State<HomePage> {
           _showTasks(),
         ],
       ),
+    );
+  }
+
+  _appBar() {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: context.theme.backgroundColor,
+      leading: GestureDetector(
+        onTap: () {
+          ThemeService().switchTheme();
+          notifyHelper.displayNotification(
+            title: 'Theme Changed',
+            body: Get.isDarkMode ? 'Dark Mode Off' : 'Dark Mode On',
+          );
+          // notifyHelper.scheduledNotification();
+        },
+        child: Icon(
+          Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nightlight_outlined,
+          size: 20,
+          color: Get.isDarkMode ? Colors.white : Colors.black,
+        ),
+      ),
+      actions: [
+        // const CircleAvatar(
+        //   radius: 18,
+        //   backgroundImage: AssetImage(
+        //     "assets/images/profile_3.jpg",
+        //   ),
+        // ),
+        IconButton(
+          icon: const Icon(Icons.person_outlined),
+          color: Get.isDarkMode ? Colors.white : Colors.black,
+          iconSize: 25,
+          onPressed: () {},
+        ),
+        const SizedBox(width: 10),
+      ],
     );
   }
 
@@ -146,7 +184,17 @@ class _HomePageState extends State<HomePage> {
               color: Colors.red[300]!,
               context: context,
             ),
-            const SizedBox(height: 15),
+            _bottomSheetButton(
+              label: "View Tasks",
+              onTap: () {
+                Get.to(() => NotifiedPage(
+                    label: '${task.title}| ' + ' ${task.note}|',
+                    noteClr: _getBGClr(task.color ?? 0)));
+              },
+              color: Colors.green[300]!,
+              context: context,
+            ),
+            // const SizedBox(height: 10),
             _bottomSheetButton(
               label: "Close",
               onTap: () {
@@ -156,11 +204,24 @@ class _HomePageState extends State<HomePage> {
               isClose: true,
               context: context,
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
           ],
         ),
       ),
     );
+  }
+
+  _getBGClr(int no) {
+    switch (no) {
+      case 0:
+        return bluishClr;
+      case 1:
+        return pinkClr;
+      case 2:
+        return yellowClr;
+      default:
+        return bluishClr;
+    }
   }
 
   _bottomSheetButton({
@@ -259,37 +320,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-    );
-  }
-
-  _appBar() {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: context.theme.backgroundColor,
-      leading: GestureDetector(
-        onTap: () {
-          ThemeService().switchTheme();
-          notifyHelper.displayNotification(
-            title: 'Theme Changed',
-            body: Get.isDarkMode ? 'Dark Mode Off' : 'Dark Mode On',
-          );
-          // notifyHelper.scheduledNotification();
-        },
-        child: Icon(
-          Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nightlight_outlined,
-          size: 20,
-          color: Get.isDarkMode ? Colors.white : Colors.black,
-        ),
-      ),
-      actions: const [
-        CircleAvatar(
-          radius: 18,
-          backgroundImage: AssetImage(
-            "assets/images/profile_3.jpg",
-          ),
-        ),
-        SizedBox(width: 20),
-      ],
     );
   }
 }

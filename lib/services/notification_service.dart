@@ -3,8 +3,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:get/get.dart';
 import 'package:note_3/models/task.dart';
+import 'package:note_3/ui/notified_page.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
+import 'dart:developer' as devtools show log;
 
 class NotifyHelper {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -35,11 +37,15 @@ class NotifyHelper {
 
   Future selectNotification(String? payload) async {
     if (payload != null) {
-      print('notification payload: $payload');
+      devtools.log('notification payload: $payload');
     } else {
-      print("Notification Done");
+      devtools.log('Notification Done');
     }
-    Get.to(() => Container(color: Colors.green));
+    if (payload == "Theme Changed") {
+      devtools.log('No Where to go');
+    } else {
+      Get.to(() => NotifiedPage(label: payload));
+    }
   }
 
   Future onDidReceiveLocalNotification(
@@ -66,7 +72,7 @@ class NotifyHelper {
       title,
       body,
       platformChannelSpecifics,
-      payload: 'Default_Sound',
+      payload: 'Theme Changed',
     );
   }
 
@@ -87,6 +93,7 @@ class NotifyHelper {
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
+      payload: '${task.title}| ' + ' ${task.note}|',
     );
   }
 
