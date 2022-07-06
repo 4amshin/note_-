@@ -58,32 +58,51 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (_, index) {
               devtools.log('Length: ${_taskController.taskList.length}');
               Task task = _taskController.taskList[index];
-              devtools.log(task.toJson().toString());
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                child: SlideAnimation(
-                  child: FadeInAnimation(
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            _showBottomSheet(
-                              context,
-                              task,
-                            );
-                          },
-                          child: TaskTile(
-                            task,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
+              if (task.repeat == 'Daily') {
+                DateTime date =
+                    DateFormat.Hm().parse(task.startTime.toString());
+                var myTime = DateFormat('HH:mm').format(date);
+                devtools.log(myTime.toString());
+                notifyHelper.scheduledNotification(
+                  int.parse(myTime.toString().split(':')[0]),
+                  int.parse(myTime.toString().split(':')[1]),
+                  task,
+                );
+                return _animationConfiguration(index, task);
+              }
+              if (task.date == DateFormat.yMd().format(selectedDate)) {
+                return _animationConfiguration(index, task);
+              } else {
+                return Container();
+              }
             },
           );
         },
+      ),
+    );
+  }
+
+  _animationConfiguration(index, Task task) {
+    return AnimationConfiguration.staggeredList(
+      position: index,
+      child: SlideAnimation(
+        child: FadeInAnimation(
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  _showBottomSheet(
+                    context,
+                    task,
+                  );
+                },
+                child: TaskTile(
+                  task,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -192,7 +211,7 @@ class _HomePageState extends State<HomePage> {
 
   _addDateBar() {
     return Container(
-      margin: const EdgeInsets.only(left: 20, top: 15),
+      margin: const EdgeInsets.only(left: 15, top: 15),
       child: DatePicker(
         DateTime.now(),
         height: 100,
@@ -204,7 +223,9 @@ class _HomePageState extends State<HomePage> {
         monthTextStyle: timeTextStyle(fontSize: 14),
         dayTextStyle: timeTextStyle(fontSize: 11),
         onDateChange: (date) {
-          selectedDate = date;
+          setState(() {
+            selectedDate = date;
+          });
         },
       ),
     );
@@ -252,7 +273,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Theme Changed',
             body: Get.isDarkMode ? 'Dark Mode Off' : 'Dark Mode On',
           );
-          notifyHelper.scheduledNotification();
+          // notifyHelper.scheduledNotification();
         },
         child: Icon(
           Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nightlight_outlined,
