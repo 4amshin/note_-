@@ -156,7 +156,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     child: MyButton(
                       label: 'Create Task',
                       onTap: () {
-                        devtools.log('Calling Warning Dialog');
+                        devtools.log('Creating Note');
                         _validateData();
                       },
                     ),
