@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:get/get.dart';
+import 'package:note_3/controller/task_controller.dart';
 import 'package:note_3/models/task.dart';
 import 'package:note_3/ui/notified_page.dart';
+import 'package:note_3/ui/theme.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'dart:developer' as devtools show log;
 
 class NotifyHelper {
+  final _taskController = Get.put(TaskController());
+
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin(); //
 
@@ -44,7 +48,11 @@ class NotifyHelper {
     if (payload == "Theme Changed") {
       devtools.log('No Where to go');
     } else {
-      Get.to(() => NotifiedPage(label: payload));
+      Get.to(
+        () => NotifiedPage(
+          label: payload,
+        ),
+      );
     }
   }
 
@@ -117,5 +125,18 @@ class NotifyHelper {
     tz.initializeTimeZones();
     final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(timeZone));
+  }
+
+  _getBGClr(int no) {
+    switch (no) {
+      case 0:
+        return bluishClr;
+      case 1:
+        return pinkClr;
+      case 2:
+        return yellowClr;
+      default:
+        return bluishClr;
+    }
   }
 }

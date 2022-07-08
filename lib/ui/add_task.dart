@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:note_3/controller/task_controller.dart';
 import 'package:note_3/models/task.dart';
+import 'package:note_3/ui/profil_page.dart';
 import 'package:note_3/ui/theme.dart';
 import 'package:note_3/widget/button.dart';
 import 'package:note_3/widget/input_field.dart';
@@ -268,14 +269,22 @@ class _AddTaskPageState extends State<AddTaskPage> {
           color: Get.isDarkMode ? Colors.white : Colors.black,
         ),
       ),
-      actions: const [
-        CircleAvatar(
-          radius: 18,
-          backgroundImage: AssetImage(
-            "assets/images/profile_3.jpg",
-          ),
+      actions: [
+        // const CircleAvatar(
+        //   radius: 18,
+        //   backgroundImage: AssetImage(
+        //     "assets/images/profile_3.jpg",
+        //   ),
+        // ),
+        IconButton(
+          icon: const Icon(Icons.person_outlined),
+          color: Get.isDarkMode ? Colors.white : Colors.black,
+          iconSize: 25,
+          onPressed: () {
+            Get.to(const ProfilePage());
+          },
         ),
-        SizedBox(width: 20),
+        const SizedBox(width: 10),
       ],
     );
   }

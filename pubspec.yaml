@@ -43,6 +43,11 @@ dependencies:
   date_picker_timeline: ^1.2.3
   sqflite: ^2.0.2+1
   flutter_staggered_animations: "^1.0.0"
+
+  dependencies:
+  flutter_localizations: 
+    sdk: flutter
+  localization: ^2.1.0
   
 
 dev_dependencies:
@@ -71,6 +76,8 @@ flutter:
   assets:
     - assets/images/
   #   - images/a_dot_ham.jpeg
+
+  generate: true
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

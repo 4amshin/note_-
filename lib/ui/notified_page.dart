@@ -17,6 +17,7 @@ class NotifiedPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Get.isDarkMode ? Colors.grey[600] : Colors.white,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           color: Get.isDarkMode ? Colors.white : Colors.black,
@@ -39,7 +40,8 @@ class NotifiedPage extends StatelessWidget {
           width: 300,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: noteClr,
+            color: noteClr ??
+                primaryClr, //if Color is null or noteClr.isEmpty the use primaryClr
           ),
           child: Center(
             child: Text(

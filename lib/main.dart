@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:note_3/db/db_helper.dart';
 import 'package:note_3/ui/home_page.dart';
 import 'package:note_3/services/theme_service.dart';
+import 'package:note_3/ui/splash_screen.dart';
 import 'package:note_3/ui/theme.dart';
 
 Future<void> main() async {
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       theme: Themes.lightMode,
       darkTheme: Themes.darkMode,
       themeMode: ThemeService().theme,
-      home: const HomePage(),
+      home: const SplashScreen(),
     );
   }
 }

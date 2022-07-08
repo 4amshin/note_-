@@ -9,6 +9,7 @@ import 'package:note_3/services/notification_service.dart';
 import 'package:note_3/services/theme_service.dart';
 import 'package:note_3/ui/add_task.dart';
 import 'package:note_3/ui/notified_page.dart';
+import 'package:note_3/ui/profil_page.dart';
 import 'package:note_3/ui/theme.dart';
 import 'package:note_3/widget/button.dart';
 import 'dart:developer' as devtools show log;
@@ -80,7 +81,9 @@ class _HomePageState extends State<HomePage> {
           icon: const Icon(Icons.person_outlined),
           color: Get.isDarkMode ? Colors.white : Colors.black,
           iconSize: 25,
-          onPressed: () {},
+          onPressed: () {
+            Get.to(const ProfilePage());
+          },
         ),
         const SizedBox(width: 10),
       ],
@@ -187,9 +190,12 @@ class _HomePageState extends State<HomePage> {
             _bottomSheetButton(
               label: "View Tasks",
               onTap: () {
-                Get.to(() => NotifiedPage(
+                Get.to(
+                  () => NotifiedPage(
                     label: '${task.title}| ' + ' ${task.note}|',
-                    noteClr: _getBGClr(task.color ?? 0)));
+                    noteClr: _getBGClr(task.color ?? 0),
+                  ),
+                );
               },
               color: Colors.green[300]!,
               context: context,
